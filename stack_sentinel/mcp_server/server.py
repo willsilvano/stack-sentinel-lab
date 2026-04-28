@@ -29,7 +29,15 @@ def create_mcp_server() -> SimpleMCPServer:
 
 def register_ticket_tool(server: SimpleMCPServer) -> SimpleMCPServer:
     """Contrato do Ex04: registra a tool de ticket no servidor informado."""
-    raise NotImplementedError("Ex04 ainda nao implementado")
+    server.register_tool(
+        ToolDefinition(
+            name=TICKET_TOOL_NAME,
+            handler=tools.fetch_ticket_context,
+            description="Busca tickets",
+            input_schema={"type": "object", "required": ["ticket_id"],},
+        )
+    )
+    return server
 
 
 def register_build_tool(server: SimpleMCPServer) -> SimpleMCPServer:
