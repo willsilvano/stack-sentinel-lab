@@ -19,7 +19,27 @@ RESOURCE_TO_SLUG = {
 
 def read_doc_resource(uri: str, client: Optional[MockServiceClient] = None) -> Dict[str, Any]:
     """Contrato do Ex06: retorna conteudo de um resource docs://..."""
-    raise NotImplementedError("Ex06 ainda nao implementado")
+    if client is None:
+        client = MockServiceClient()
+    try:
+        slug = RESOURCE_TO_SLUG.get(uri)
+        if slug is None:
+            return {"ok": False, "error": f"resource desconhecido: {uri}"}
+
+        response = client.get_doc(slug)
+
+        if not response.get("ok"):
+            return {"ok": False, "error": response.get("error", "erro desconhecido")}
+
+        data = response["data"]
+        return {
+            "ok": True,
+            "uri": uri,
+            "title": data["title"],
+            "content": data["content"],
+        }
+    except Exception:
+        return {"ok": False, "error": "erro inesperado"}
 
 
 def list_doc_resources() -> list[dict]:
