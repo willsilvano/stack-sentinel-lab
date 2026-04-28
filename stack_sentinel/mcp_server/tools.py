@@ -32,4 +32,28 @@ def fetch_ticket_context(ticket_id: str, client: Optional[MockServiceClient] = N
 
 def fetch_build_status(build_id: str, client: Optional[MockServiceClient] = None) -> Dict[str, Any]:
     """Contrato do Ex05: retorna status normalizado de um build."""
-    raise NotImplementedError("Ex05 ainda nao implementado")
+    if client is None:
+        client = MockServiceClient()
+    try:
+        if not build_id or not build_id.strip():
+            return {"ok": False, "error": "build_id é obrigatório"}
+        if not build_id.startswith("BLD-"):
+            return {"ok": False, "error": f"build_id inválido: '{build_id}'. Esperado formato BLD-<número>"}
+
+        response = client.get_build(build_id)
+
+        if not response.get("ok"):
+            return {"ok": False, "error": response.get("error", "erro desconhecido")}
+
+        data = response["data"]
+        return {
+            "ok": True,
+            "id": data["id"],
+            "status": data["status"],
+            "service": data["service"],
+            "branch": data["branch"],
+            "failed_step": data["failed_step"],
+            "log_excerpt": data["log_excerpt"],
+        }
+    except Exception:
+        return {"ok": False, "error": "erro inesperado"}

@@ -11,6 +11,11 @@ def create_fastmcp_server():
         """Busca contexto normalizado de um ticket."""
         return tools.fetch_ticket_context(ticket_id)
 
+    @mcp.tool()
+    def fetch_build_status(build_id: str) -> dict:
+        """Busca status e evidências de um build pelo ID."""
+        return tools.fetch_build_status(build_id)
+
     return mcp
 
 
