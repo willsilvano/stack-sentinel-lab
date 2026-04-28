@@ -14,7 +14,17 @@ from stack_sentinel.shared.contracts import (
 
 def create_mcp_server() -> SimpleMCPServer:
     """Contrato do Ex03: cria o servidor MCP minimo do dominio Stack Sentinel."""
-    raise NotImplementedError("Ex03 ainda nao implementado")
+    return SimpleMCPServer(
+        name="stack-sentinel-mcp",
+        description="MCP para chamados",
+        metadata={
+            "domain": "incident-investigation",
+            "version": "0.1.0"
+        },
+        tools={},
+        resources={},
+        prompts={}
+    )
 
 
 def register_ticket_tool(server: SimpleMCPServer) -> SimpleMCPServer:
