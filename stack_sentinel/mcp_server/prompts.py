@@ -1,3 +1,55 @@
 def incident_triage_prompt(user_question: str, available_context: str) -> str:
-    """Contrato do Ex07: retorna um prompt de triagem de incidente."""
-    raise NotImplementedError("Ex07 ainda nao implementado")
+    """Contrato do Ex07: retorna um prompt de triagem de incidente com estrutura fixa."""
+    return (
+        "Voce e um agente de triagem de incidentes. "
+        "Analise a pergunta do usuario e o contexto disponivel para produzir uma resposta "
+        "obrigatoriamente na estrutura abaixo.\n\n"
+        "## Estrutura obrigatoria da resposta\n\n"
+        "### Resumo\n"
+        "Descreva objetivamente o problema relatado em poucas frases.\n\n"
+        "### Evidencias\n"
+        "Liste os fatos concretos extraidos do contexto: severidade, servico afetado, "
+        "status do ticket, build associada, logs relevantes. "
+        "Cite a severidade somente quando houver evidencia explicita.\n\n"
+        "### Lacunas\n"
+        "Identifique informacoes ausentes ou insuficientes para uma conclusao completa. "
+        "Nao invente dados que nao estejam presentes no contexto.\n\n"
+        "### Proximo passo\n"
+        "Sugira a acao concreta mais relevante para avançar na investigacao ou resolucao.\n\n"
+        "## Regras\n"
+        "- Use apenas informacoes presentes no contexto.\n"
+        "- Nao invente dados ausentes.\n"
+        "- Mantenha a estrutura acima sem omitir secoes.\n\n"
+        f"Pergunta do usuario: {user_question}\n\n"
+        f"Contexto disponivel: {available_context}"
+    )
+
+
+def build_failure_analysis_prompt(
+    build_status: str, failed_step: str, log_excerpt: str
+) -> str:
+    """Desafio opcional Ex07: retorna um prompt para analise de build quebrado."""
+    return (
+        "Voce e um agente especializado em analise de builds quebrados. "
+        "Use as informacoes fornecidas para formular hipoteses sobre a causa raiz da falha.\n\n"
+        "## Estrutura obrigatoria da resposta\n\n"
+        "### Status da build\n"
+        "Descreva o estado atual da build.\n\n"
+        "### Etapa que falhou\n"
+        "Identifique e explique a etapa onde ocorreu a falha.\n\n"
+        "### Hipoteses\n"
+        "Liste hipoteses plausiveis para a falha com base no log. "
+        "Ordene da mais provavel para a menos provavel.\n\n"
+        "### Evidencia insuficiente\n"
+        "Deixe claro quando nao houver evidencia suficiente para confirmar uma hipotese. "
+        "Nao invente causas sem suporte no log.\n\n"
+        "### Proximo passo\n"
+        "Sugira a acao concreta para confirmar a hipotese principal ou coletar mais dados.\n\n"
+        "## Regras\n"
+        "- Baseie-se apenas nos dados fornecidos.\n"
+        "- Nao invente informacoes ausentes.\n"
+        "- Seja explicito sobre o grau de confianca de cada hipotese.\n\n"
+        f"Status da build: {build_status}\n\n"
+        f"Etapa que falhou: {failed_step}\n\n"
+        f"Trecho de log: {log_excerpt}"
+    )

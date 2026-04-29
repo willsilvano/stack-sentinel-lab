@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "stack-sentinel": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "-m",
+        "stack_sentinel.mcp_server.fastmcp_server"
+      ],
+      "disabled": false,
+      "autoApprove": [
+        "fetch_build_status"
+      ]
+    }
+  }
+}
