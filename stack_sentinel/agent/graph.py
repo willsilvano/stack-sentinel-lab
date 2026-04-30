@@ -1,9 +1,11 @@
+from functools import partial
 from typing import Callable, List
 
 from stack_sentinel.agent.state import AgentState, create_initial_state
 from stack_sentinel.clients.mcp_client import MCPClient
 from stack_sentinel.llm.base import LLMClient
 from langgraph.graph import StateGraph, START, END
+from stack_sentinel.agent import nodes
 
 
 Node = Callable[[AgentState], AgentState]
@@ -24,7 +26,12 @@ class SimpleGraph:
 
 def route_by_intent(state: AgentState) -> str:
     """Contrato do Ex11: retorna a rota a partir de state['intent']."""
-    raise NotImplementedError("Ex11 ainda nao implementado")
+    routes = {
+        "ticket": "fetch_ticket",
+        "build": "fetch_build",
+        "docs": "fetch_docs",
+    }
+    return routes.get(state.get("intent"), "fallback")
 
 
 def run_stack_sentinel_flow(state: AgentState, llm: LLMClient, mcp_client: MCPClient) -> AgentState:
@@ -32,24 +39,47 @@ def run_stack_sentinel_flow(state: AgentState, llm: LLMClient, mcp_client: MCPCl
     raise NotImplementedError("Ex16 ainda nao implementado")
 
 
-def compile_minimal_graph() -> SimpleGraph:
+def compile_minimal_graph():
     """Contrato do Ex08: cria um grafo minimo executavel."""
+    from stack_sentinel.llm.fake_client import FakeLLMClient    
 
-    def echo_node(state: AgentState) -> AgentState:
-        return {"user_input": state["user_input"]}
+    llm = FakeLLMClient()
+  
+    agent_builder = StateGraph(AgentState)    
 
-    agent_builder = StateGraph(AgentState)
+    agent_builder.add_node("classify_intent", partial(nodes.classify_intent_node, llm=llm))
+    agent_builder.add_node("fetch_ticket", partial(nodes.fetch_ticket_node, llm=llm))
+    agent_builder.add_node("fetch_build", partial(nodes.fetch_build_node, llm=llm))
+    agent_builder.add_node("fetch_docs", partial(nodes.fetch_docs_node, llm=llm))
+    agent_builder.add_node("fallback", partial(nodes.fallback_node))
 
-    agent_builder.add_node("echo_node", echo_node)
-
-    agent_builder.add_edge(START, "echo_node")
-    agent_builder.add_edge("echo_node", END)
+    agent_builder.add_edge(START, "classify_intent")
+    agent_builder.add_conditional_edges(
+        "classify_intent",
+        route_by_intent,
+        {
+            "fetch_ticket": "fetch_ticket",
+            "fetch_build": "fetch_build",
+            "fetch_docs": "fetch_docs",
+            "fallback": "fallback",
+        },
+    )
+    agent_builder.add_edge("fetch_ticket", END)
+    agent_builder.add_edge("fetch_build", END)
+    agent_builder.add_edge("fetch_docs", END)
+    agent_builder.add_edge("fallback", END)
 
     return agent_builder.compile()
 
 
 agent = compile_minimal_graph()
 
-messages = [create_initial_state("Olá!")]
+with open('docs/graph.png', 'wb') as f:
+  f.write(agent.get_graph().draw_mermaid_png())
+
+user_input = input("Qual a mensagem? ")
+messages = [create_initial_state(user_input)]
 response = agent.invoke(messages[0])
 print(response)
+
+

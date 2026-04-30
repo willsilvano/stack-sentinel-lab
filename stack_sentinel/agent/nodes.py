@@ -12,20 +12,24 @@ from stack_sentinel.shared.utils import extract_build_id, extract_ticket_id
 
 def classify_intent_node(state: AgentState, llm: LLMClient) -> AgentState:
     """Contrato do Ex10: classifica a intencao e atualiza state['intent']."""
-    raise NotImplementedError("Ex10 ainda nao implementado")
+    valid_intents = {"ticket", "build", "docs", "unknown"}
+    intent = llm.classify_intent(state["user_input"])
+    if intent not in valid_intents:
+        intent = "unknown"
+    return update_state(state, intent=intent)
 
 
-def fetch_ticket_node(state: AgentState, mcp_client: MCPClient) -> AgentState:
+def fetch_ticket_node(state: AgentState, llm: LLMClient) -> AgentState:
     """Contrato do Ex12: consulta a tool MCP de ticket e atualiza o state."""
     raise NotImplementedError("Ex12 ainda nao implementado")
 
 
-def fetch_build_node(state: AgentState, mcp_client: MCPClient) -> AgentState:
+def fetch_build_node(state: AgentState, llm: LLMClient) -> AgentState:
     """Contrato do Ex13: consulta a tool MCP de build e atualiza o state."""
     raise NotImplementedError("Ex13 ainda nao implementado")
 
 
-def fetch_docs_node(state: AgentState, mcp_client: MCPClient) -> AgentState:
+def fetch_docs_node(state: AgentState, llm: LLMClient) -> AgentState:
     """Contrato do Ex14: le resource/prompt MCP e atualiza o context."""
     raise NotImplementedError("Ex14 ainda nao implementado")
 
