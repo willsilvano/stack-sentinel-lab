@@ -18,7 +18,7 @@ def incident_triage_prompt(user_question: str, available_context: str) -> str:
         "Sugira a acao concreta mais relevante para avançar na investigacao ou resolucao.\n\n"
         "## Regras\n"
         "- Use apenas informacoes presentes no contexto.\n"
-        "- Nao invente dados ausentes.\n"
+        "- nao invente dados ausentes.\n"
         "- Mantenha a estrutura acima sem omitir secoes.\n\n"
         f"Pergunta do usuario: {user_question}\n\n"
         f"Contexto disponivel: {available_context}"
